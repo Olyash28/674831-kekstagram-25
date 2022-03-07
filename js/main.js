@@ -48,15 +48,16 @@ const DESCRIPTIONS = [
 ];
 
 //Создаем комментарий
-const createComment = (value, index) => ({
-  id: index + 1,
+
+const createComment = () => ({
+  id: Math.round(Date.now() * Math.random()),
   avatar: `img/avatar-${getRandomNumber(1, 6)}.svg`,
   message: MESSAGES[getRandomNumber(0, MESSAGES.length - 1)],
   name: NAMES[getRandomNumber(0, NAMES.length - 1)],
 });
 
 //Список комментариев
-const listComments = Array.from({length: 16}, createComment);
+const CommentsList = () => Array.from({length: 8}, createComment);
 
 //Создаем описание фото
 const createPhotoDescription = (value, index) => ({
@@ -64,10 +65,9 @@ const createPhotoDescription = (value, index) => ({
   url: `photos/${index + 1}.jpg`,
   description: DESCRIPTIONS[getRandomNumber(0, MESSAGES.length - 1)],
   likes: getRandomNumber(15, 200),
-  comments: listComments,
+  comments: CommentsList(),
 });
 
 //Массив из фоток
 const photos = Array.from({length: 25}, createPhotoDescription);
-
 photos();
