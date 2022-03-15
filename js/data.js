@@ -54,3 +54,4 @@ const createPhotoDescription = (value, index) => ({
 const photos = Array.from({length: 25}, createPhotoDescription);
 
 export {photos};
+export {commentsList};
