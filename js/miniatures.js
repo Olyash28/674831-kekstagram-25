@@ -11,10 +11,11 @@ for (let i = 0; i < photos.length; i++) {
 
   const img = element.querySelector('img');
   img.src = photos[i].url;
+  img.alt = photos[i].description;
   const pictureLikes = element.querySelector('.picture__likes');
   pictureLikes.textContent = photos[i].likes;
-  const pictureComments = element.querySelector('.picture__likes');
-  pictureComments.textContent = photos[i].comments;
+  const pictureComments = element.querySelector('.picture__comments');
+  pictureComments.textContent = photos[i].comments.length;
 
   fragment.appendChild(element);
 }
