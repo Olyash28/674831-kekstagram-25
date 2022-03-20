@@ -19,8 +19,6 @@ function getRandomNumber(firstNumber, lastNumber) {
 // checkCommentLength();
 //
 
-const isEscapeKey = (evt) => {
-  return evt.key === 'Escape';
-};
+const isEscapeKey = (evt) => evt.key === 'Escape';
 
 export {getRandomNumber, isEscapeKey};
