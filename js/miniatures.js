@@ -1,4 +1,5 @@
 import {photos} from './data.js';
+import {createBigPicture} from './big-photo.js';
 
 const picturesContainer = document.querySelector('.pictures');
 
@@ -16,6 +17,10 @@ for (let i = 0; i < photos.length; i++) {
   pictureLikes.textContent = photos[i].likes;
   const pictureComments = element.querySelector('.picture__comments');
   pictureComments.textContent = photos[i].comments.length;
+
+  element.addEventListener('click', () => {
+    createBigPicture(i);
+  });
 
   fragment.appendChild(element);
 }

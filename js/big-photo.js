@@ -3,7 +3,6 @@ import {isEscapeKey} from './util.js';
 import {createCommentsList} from './data.js';
 
 const bigPictureContainer = document.querySelector('.big-picture');
-const minPictures = document.querySelectorAll('.picture');
 const closeBtnBigPhoto = document.querySelector('.big-picture__cancel');
 const bigPhoto = bigPictureContainer.querySelector('.big-picture__img img');
 const captionPhoto = bigPictureContainer.querySelector('.social__caption');
@@ -40,35 +39,35 @@ function makeElement(tagName, className) {
   return element;
 }
 
-for (let i = 0; i < minPictures.length; i++) {
-  minPictures[i].addEventListener('click', () => {
-    openBigPicture();
-    captionPhoto.textContent = photos[i].description;
-    bigPhoto.src = photos[i].url;
-    bigPhoto.alt = photos[i].description;
-    likesCount.textContent = photos[i].likes;
-    commentsCount.textContent = photos[i].comments.length;
-    socialComments.innerHTML = '';
-    //  Создание комментариев
-    const commentsList = createCommentsList();
+const createBigPicture = (i) => {
+  openBigPicture();
+  captionPhoto.textContent = photos[i].description;
+  bigPhoto.src = photos[i].url;
+  bigPhoto.alt = photos[i].description;
+  likesCount.textContent = photos[i].likes;
+  commentsCount.textContent = photos[i].comments.length;
+  socialComments.innerHTML = '';
+  const commentsList = createCommentsList();
 
-    commentsList.forEach((comment) => {
-      const fragment = document.createDocumentFragment();
-      const socialComment = makeElement('li', 'social__comment');
-      const socialPicture = makeElement('img', 'social__picture');
-      socialComment.appendChild(socialPicture);
-      socialPicture.alt = comment.name;
-      socialPicture.src = comment.avatar;
-      socialPicture.width = '35';
-      socialPicture.height = '35';
-      const socialText = makeElement('p', 'social__text');
-      socialComment.appendChild(socialText);
-      socialText.textContent = comment.message;
-      fragment.appendChild(socialComment);
-      socialComments.appendChild(fragment);
-    });
+  commentsList.forEach(({avatar, message, name}) => {
+    const fragment = document.createDocumentFragment();
+    const socialComment = makeElement('li', 'social__comment');
+    const socialPicture = makeElement('img', 'social__picture');
+    socialComment.appendChild(socialPicture);
+    socialPicture.alt = name;
+    socialPicture.src = avatar;
+    socialPicture.width = '35';
+    socialPicture.height = '35';
+    const socialText = makeElement('p', 'social__text');
+    socialComment.appendChild(socialText);
+    socialText.textContent = message;
+    fragment.appendChild(socialComment);
+    socialComments.appendChild(fragment);
   });
-  closeBtnBigPhoto.addEventListener('click', () => {
-    closeBigPicture();
-  });
-}
+};
+
+closeBtnBigPhoto.addEventListener('click', () => {
+  closeBigPicture();
+});
+
+export {createBigPicture};
