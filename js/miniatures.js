@@ -19,7 +19,7 @@ for (let i = 0; i < photos.length; i++) {
   pictureComments.textContent = photos[i].comments.length;
 
   element.addEventListener('click', () => {
-    createBigPicture(i);
+    createBigPicture(photos[i]);
   });
 
   fragment.appendChild(element);
