@@ -1,3 +1,3 @@
 import './data.js';
 import './miniatures.js';
-import './bigphoto.js';
+import './big-photo.js';

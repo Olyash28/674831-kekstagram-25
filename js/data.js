@@ -39,7 +39,7 @@ const createComment = () => ({
 });
 
 //Список комментариев
-const commentsList = () => Array.from({length: 5}, createComment);
+const createCommentsList = () => Array.from({length: 5}, createComment);
 
 //Создаем описание фото
 const createPhotoDescription = (value, index) => ({
@@ -47,11 +47,10 @@ const createPhotoDescription = (value, index) => ({
   url: `photos/${index + 1}.jpg`,
   description: DESCRIPTIONS[getRandomNumber(0, MESSAGES.length - 1)],
   likes: getRandomNumber(15, 200),
-  comments: commentsList(),
+  comments: createCommentsList(),
 });
 
 //Массив из фоток
 const photos = Array.from({length: 25}, createPhotoDescription);
 
-export {photos};
-export {commentsList};
+export {photos, createCommentsList};
