@@ -23,7 +23,7 @@ const closeBigPicture = () => {
   bigPictureContainer.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onPopupEscKeydown);
-  closeBtnBigPhoto.removeEventListener('click', (onCloseBtnBigPhoto));
+  closeBtnBigPhoto.removeEventListener('click', onCloseBtnBigPhoto);
 };
 
 function onPopupEscKeydown(evt) {
@@ -70,7 +70,7 @@ const createBigPicture = (item) => {
     socialComments.appendChild(fragment);
   });
 
-  closeBtnBigPhoto.addEventListener('click', (onCloseBtnBigPhoto));
+  closeBtnBigPhoto.addEventListener('click', onCloseBtnBigPhoto);
 };
 
 export {createBigPicture};
