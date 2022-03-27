@@ -44,36 +44,46 @@ uploadDescription.addEventListener('keydown',  (evt) => {
   evt.stopPropagation();
 });
 
-const pristine = new Pristine(uploadForm, {
-  classTo: 'setup-wizard-form__element',
-  errorTextParent: 'setup-wizard-form__element',
-  // errorTextClass: 'setup-wizard-form__error-text',
+hashtag.addEventListener('keydown',  (evt) => {
+  evt.stopPropagation();
 });
 
+const pristine = new Pristine(uploadForm);
+
+let textError = '';
+
 function validateHashtag(value) {
-  const hashtagValid = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
-  hashtagValid.test(value);
+  let isValid = true;
+  const splatValue = value.split(' ');
+  const uniqueArray = Array.from(new Set(splatValue));
+  const isUniqArrValid = uniqueArray.every((item) => /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/.test(item));
 
-  return hashtagValid;
+  if(!isUniqArrValid) {
+    isValid = false;
+    textError = 'В хэш-теге от 2 до 20 символов с #';
+  }
+  if(splatValue.length !== uniqueArray.length) {
+    isValid = false;
+    textError = 'Хэш-теги не должны повторяться';
+  }
+  if(uniqueArray.length > 5) {
+    isValid = false;
+    textError = 'Нельзя указать больше пяти хэш-тегов';
+  }
+
+  return isValid;
 }
-
-//нельзя указать больше пяти хэш-тегов;
-// const checkAmountHashtag = () => {
-//   const tags = hashtag.value;
-//   const preHashtagList = tags.split(' ', 5);
-//   const hashtagList = Array.from(new Set(preHashtagList));
-//   // for (let i = 0; i < hashtagList.length; i++) {
-//   //   validateHashtag();
-//   // }
-// };
-//нельзя указать больше пяти хэш-тегов;
 
 function validateDescription(value) {
   return value.length <= 6;
 }
 
-pristine.addValidator(hashtag, validateHashtag, 'обязателен # и не больше 20 символов');
-pristine.addValidator(uploadDescription, validateDescription, 'не больше 140 символов');
+function getTextError() {
+  return textError;
+}
+
+pristine.addValidator(hashtag, validateHashtag, getTextError);
+pristine.addValidator(uploadDescription, validateDescription, 'Не больше 140 символов');
 
 uploadForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
