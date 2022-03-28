@@ -3,18 +3,34 @@ import {isEscapeKey} from './util.js';
 const btnUpload = document.querySelector('#upload-file');
 const modalUpload = document.querySelector('.img-upload__overlay');
 const closeBtnUpload = document.querySelector('#upload-cancel');
+const uploadForm = document.querySelector('#upload-select-image');
+const hashtag = uploadForm.querySelector('.text__hashtags');
+const uploadDescription = uploadForm.querySelector('.text__description');
+
+const pristine = new Pristine(uploadForm);
 
 const openForm = () => {
   modalUpload.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onPopupEscKeydown);
+  closeBtnUpload.addEventListener('click', onCloseForm);
 };
+
+//отменить обработчик Esc при фокусе
+uploadDescription.addEventListener('keydown',  (evt) => {
+  evt.stopPropagation();
+});
+
+hashtag.addEventListener('keydown',  (evt) => {
+  evt.stopPropagation();
+});
 
 const closeForm = () => {
   modalUpload.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onPopupEscKeydown);
   closeBtnUpload.removeEventListener('click', onCloseForm);
+  pristine.reset();
 };
 
 function onPopupEscKeydown(evt) {
@@ -26,35 +42,15 @@ function onPopupEscKeydown(evt) {
 
 function onCloseForm() {
   closeForm();
-  // необходимо сбрасывать значение поля выбора файла
   btnUpload.value = '';
 }
 
 btnUpload.addEventListener('change', openForm);
 
-closeBtnUpload.addEventListener('click', onCloseForm);
-
-// Валидация
-const uploadForm = document.querySelector('#upload-select-image');
-const hashtag = uploadForm.querySelector('.text__hashtags');
-const uploadDescription = uploadForm.querySelector('.text__description');
-
-//отменить обработчик Esc при фокусе
-uploadDescription.addEventListener('keydown',  (evt) => {
-  evt.stopPropagation();
-});
-
-hashtag.addEventListener('keydown',  (evt) => {
-  evt.stopPropagation();
-});
-
-const pristine = new Pristine(uploadForm);
-
-let textError = '';
-
-function validateHashtag(value) {
+const checkValue = (value) => {
+  let textError = '';
   let isValid = true;
-  const splatValue = value.split(' ');
+  const splatValue = value.trim().split(' ');
   const uniqueArray = Array.from(new Set(splatValue));
   const isUniqArrValid = uniqueArray.every((item) => /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/.test(item));
 
@@ -70,16 +66,30 @@ function validateHashtag(value) {
     isValid = false;
     textError = 'Нельзя указать больше пяти хэш-тегов';
   }
+  if (value.length === 0) {
+    isValid = true;
+  }
+
+  return {
+    isValid,
+    textError
+  };
+};
+
+function validateHashtag(value) {
+  const {isValid} = checkValue(value);
 
   return isValid;
 }
 
-function validateDescription(value) {
-  return value.length <= 6;
+function getTextError(value) {
+  const {textError} = checkValue(value);
+
+  return textError;
 }
 
-function getTextError() {
-  return textError;
+function validateDescription(value) {
+  return value.length <= 140;
 }
 
 pristine.addValidator(hashtag, validateHashtag, getTextError);
