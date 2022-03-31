@@ -39,7 +39,7 @@ const createComment = () => ({
 });
 
 //Список комментариев
-const createCommentsList = () => Array.from({length: 5}, createComment);
+const createCommentsList = () => Array.from({length: 11}, createComment);
 
 //Создаем описание фото
 const createPhotoDescription = (value, index) => ({

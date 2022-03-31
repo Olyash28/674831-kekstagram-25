@@ -6,6 +6,7 @@ const closeBtnUpload = document.querySelector('#upload-cancel');
 const uploadForm = document.querySelector('#upload-select-image');
 const hashtag = uploadForm.querySelector('.text__hashtags');
 const uploadDescription = uploadForm.querySelector('.text__description');
+const btnSubmit = uploadForm.querySelector('#upload-submit');
 
 const pristine = new Pristine(uploadForm);
 
@@ -14,6 +15,8 @@ const openForm = () => {
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onPopupEscKeydown);
   closeBtnUpload.addEventListener('click', onCloseForm);
+  // btnSubmit.setAttribute('disabled', '');
+  // btnSubmit.disabled = true;
 };
 
 //отменить обработчик Esc при фокусе
@@ -50,24 +53,28 @@ btnUpload.addEventListener('change', openForm);
 const checkValue = (value) => {
   let textError = '';
   let isValid = true;
-  const splatValue = value.trim().split(' ');
-  const uniqueArray = Array.from(new Set(splatValue));
-  const isUniqArrValid = uniqueArray.every((item) => /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/.test(item));
+  const usersTags = value.trim().split(' ');
+  const uniqueTags = Array.from(new Set(usersTags));
+  const isUniqArrValid = uniqueTags.every((item) => /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/.test(item));
 
   if(!isUniqArrValid) {
     isValid = false;
     textError = 'В хэш-теге от 2 до 20 символов с #';
+    btnSubmit.disabled = true;
   }
-  if(splatValue.length !== uniqueArray.length) {
+  if(usersTags.length !== uniqueTags.length) {
     isValid = false;
     textError = 'Хэш-теги не должны повторяться';
+    btnSubmit.disabled = true;
   }
-  if(uniqueArray.length > 5) {
+  if(uniqueTags.length > 5) {
     isValid = false;
     textError = 'Нельзя указать больше пяти хэш-тегов';
+    btnSubmit.disabled = true;
   }
   if (value.length === 0) {
     isValid = true;
+    btnSubmit.disabled = false;
   }
 
   return {
