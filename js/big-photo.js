@@ -13,41 +13,15 @@ const commentsCountTotal = bigPictureContainer.querySelector('.comments-count-to
 const socialComments = document.querySelector('.social__comments');
 const btnLoaderComments = document.querySelector('.social__comments-loader');
 
-//функция для открытия окна
-const openBigPicture = () => {
-  bigPictureContainer.classList.remove('hidden');
-  document.body.classList.add('modal-open');
-  document.addEventListener('keydown', onPopupEscKeydown);
-};
-
-//функция для закрытия окна
-const closeBigPicture = () => {
-  bigPictureContainer.classList.add('hidden');
-  document.body.classList.remove('modal-open');
-  document.removeEventListener('keydown', onPopupEscKeydown);
-  closeBtnBigPhoto.removeEventListener('click', onCloseBtnBigPhoto);
-};
-
-function onPopupEscKeydown(evt) {
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    closeBigPicture();
-  }
-}
-
-function onCloseBtnBigPhoto() {
-  closeBigPicture();
-}
-
-//функция создания элемента
 const makeElement = (tagName, className) => {
   const element = document.createElement(tagName);
   element.classList.add(className);
   return element;
 };
 
-const createBlockComments = (firstIndex, totalElements) => {
-  const lastIndex = firstIndex + BLOCK_COMMENTS_STEP;
+function createBlockComments(totalElements) {
+  const firstIndex = socialComments.children.length;
+  const lastIndex = socialComments.children.length + BLOCK_COMMENTS_STEP;
   const part = totalElements.slice(firstIndex, lastIndex);
   part.forEach(({avatar, message, name}) => {
     const fragment = document.createDocumentFragment();
@@ -64,44 +38,70 @@ const createBlockComments = (firstIndex, totalElements) => {
     fragment.appendChild(socialComment);
     socialComments.appendChild(fragment);
   });
-  return lastIndex;
-};
+}
 
 const createBigPicture = (item) => {
-  const totalBlock = item.comments.length;
+  //функция для открытия окна
+  const openBigPicture = () => {
+    bigPictureContainer.classList.remove('hidden');
+    document.body.classList.add('modal-open');
+    document.addEventListener('keydown', onPopupEscKeydown);
+  };
   openBigPicture();
+  const totalBlock = item.comments;
   captionPhoto.textContent = item.description;
   bigPhoto.src = item.url;
   bigPhoto.alt = item.description;
   likesCount.textContent = item.likes;
   socialComments.innerHTML = '';
-  let firstBlock = createBlockComments(0, item.comments);
-  commentsCount.textContent = firstBlock;
-  commentsCountTotal.textContent = totalBlock;
+  createBlockComments(item.comments);
+  commentsCount.textContent = socialComments.children.length; //сколько видим комментов
+  commentsCountTotal.textContent = totalBlock.length;
 
-  if(totalBlock > BLOCK_COMMENTS_STEP) {
-    btnLoaderComments.style.display = 'block';
+  if(commentsCount.textContent < totalBlock.length) {
+    btnLoaderComments.classList.remove('hidden');
   } else {
-    commentsCount.textContent = totalBlock;
-    btnLoaderComments.style.display = 'none';
+    commentsCount.textContent = totalBlock.length;
+    btnLoaderComments.classList.add('hidden');
   }
-  //НАЖИМАЕМ НА КНОПКУ
-  btnLoaderComments.addEventListener('click', () => {
-    const currentBlock = createBlockComments(firstBlock, item.comments);
-    let visibleBlock = currentBlock;
 
-    if(currentBlock > totalBlock) {
+  const showComments = () => {
+    createBlockComments(item.comments);
+    commentsCount.textContent = socialComments.children.length;
+    let visibleBlock = socialComments.children;
+
+    if(socialComments.children.length > totalBlock.length) {
       visibleBlock = totalBlock;
     }
 
-    commentsCount.textContent = visibleBlock; //число текущих комментариев
-    if (totalBlock - currentBlock <= 0) {
-      btnLoaderComments.style.display = 'none';
+    commentsCount.textContent = visibleBlock.length; //число текущих комментариев
+    if (totalBlock.length - socialComments.children.length <= 0) {
+      btnLoaderComments.classList.add('hidden');
     }
-    firstBlock = currentBlock;
-  });
-  //надо удалить обработчик с кнопки при закрытии
+  };
+  //НАЖИМАЕМ НА КНОПКУ
+  btnLoaderComments.addEventListener('click', showComments);
+  //функция для закрытия окна
+  const closeBigPicture = () => {
+    bigPictureContainer.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+    document.removeEventListener('keydown', onPopupEscKeydown);
+    closeBtnBigPhoto.removeEventListener('click', onCloseBtnBigPhoto);
+    btnLoaderComments.removeEventListener('click', showComments);
+  };
+
+  function onPopupEscKeydown(evt) {
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      closeBigPicture();
+    }
+  }
+
+  function onCloseBtnBigPhoto() {
+    closeBigPicture();
+  }
   closeBtnBigPhoto.addEventListener('click', onCloseBtnBigPhoto);
 };
 
 export {createBigPicture};
+
