@@ -1,25 +1,24 @@
 import {isEscapeKey} from './util.js';
+import {getChangeScale} from './effects.js';
 
-const btnUpload = document.querySelector('#upload-file');
+const buttonUpload = document.querySelector('#upload-file');
 const modalUpload = document.querySelector('.img-upload__overlay');
-const closeBtnUpload = document.querySelector('#upload-cancel');
+const buttonCloseUpload = document.querySelector('#upload-cancel');
 const uploadForm = document.querySelector('#upload-select-image');
 const hashtag = uploadForm.querySelector('.text__hashtags');
 const uploadDescription = uploadForm.querySelector('.text__description');
-const btnSubmit = uploadForm.querySelector('#upload-submit');
+const buttonSubmit = uploadForm.querySelector('#upload-submit');
 
 const pristine = new Pristine(uploadForm);
 
-const openForm = () => {
+const onFormOpen = () => {
   modalUpload.classList.remove('hidden');
   document.body.classList.add('modal-open');
+  getChangeScale();
   document.addEventListener('keydown', onPopupEscKeydown);
-  closeBtnUpload.addEventListener('click', onCloseForm);
-  // btnSubmit.setAttribute('disabled', '');
-  // btnSubmit.disabled = true;
+  buttonCloseUpload.addEventListener('click', onCloseForm);
 };
 
-//отменить обработчик Esc при фокусе
 uploadDescription.addEventListener('keydown',  (evt) => {
   evt.stopPropagation();
 });
@@ -32,7 +31,7 @@ const closeForm = () => {
   modalUpload.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onPopupEscKeydown);
-  closeBtnUpload.removeEventListener('click', onCloseForm);
+  buttonCloseUpload.removeEventListener('click', onCloseForm);
   pristine.reset();
 };
 
@@ -45,10 +44,10 @@ function onPopupEscKeydown(evt) {
 
 function onCloseForm() {
   closeForm();
-  btnUpload.value = '';
+  buttonUpload.value = '';
 }
 
-btnUpload.addEventListener('change', openForm);
+buttonUpload.addEventListener('change', onFormOpen);
 
 const checkValue = (value) => {
   let textError = '';
@@ -60,21 +59,21 @@ const checkValue = (value) => {
   if(!isUniqArrValid) {
     isValid = false;
     textError = 'В хэш-теге от 2 до 20 символов с #';
-    btnSubmit.disabled = true;
+    buttonSubmit.disabled = true;
   }
   if(usersTags.length !== uniqueTags.length) {
     isValid = false;
     textError = 'Хэш-теги не должны повторяться';
-    btnSubmit.disabled = true;
+    buttonSubmit.disabled = true;
   }
   if(uniqueTags.length > 5) {
     isValid = false;
     textError = 'Нельзя указать больше пяти хэш-тегов';
-    btnSubmit.disabled = true;
+    buttonSubmit.disabled = true;
   }
   if (value.length === 0) {
     isValid = true;
-    btnSubmit.disabled = false;
+    buttonSubmit.disabled = false;
   }
 
   return {
