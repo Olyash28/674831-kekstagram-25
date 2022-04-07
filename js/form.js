@@ -1,5 +1,6 @@
 import {isEscapeKey} from './util.js';
-import {getChangeScale} from './effects.js';
+import {createScaleZoom, onPhotoBigger, onPhotoSmaller} from './zoom.js';
+import {onFilterChange} from './slider.js';
 
 const buttonUpload = document.querySelector('#upload-file');
 const modalUpload = document.querySelector('.img-upload__overlay');
@@ -8,13 +9,18 @@ const uploadForm = document.querySelector('#upload-select-image');
 const hashtag = uploadForm.querySelector('.text__hashtags');
 const uploadDescription = uploadForm.querySelector('.text__description');
 const buttonSubmit = uploadForm.querySelector('#upload-submit');
+const buttonControlSmaller = document.querySelector('.scale__control--smaller');
+const buttonControlBigger = document.querySelector('.scale__control--bigger');
 
 const pristine = new Pristine(uploadForm);
 
 const onFormOpen = () => {
   modalUpload.classList.remove('hidden');
   document.body.classList.add('modal-open');
-  getChangeScale();
+  createScaleZoom();
+  uploadForm.addEventListener('change', onFilterChange);
+  buttonControlBigger.addEventListener('click', onPhotoBigger);
+  buttonControlSmaller.addEventListener('click', onPhotoSmaller);
   document.addEventListener('keydown', onPopupEscKeydown);
   buttonCloseUpload.addEventListener('click', onCloseForm);
 };
