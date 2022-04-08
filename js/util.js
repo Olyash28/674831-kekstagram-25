@@ -21,4 +21,10 @@ function getRandomNumber(firstNumber, lastNumber) {
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {getRandomNumber, isEscapeKey};
+const makeElement = (tagName, className) => {
+  const element = document.createElement(tagName);
+  element.classList.add(className);
+  return element;
+};
+
+export {getRandomNumber, isEscapeKey, makeElement};
