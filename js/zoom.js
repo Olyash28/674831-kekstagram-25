@@ -12,7 +12,7 @@ const ZoomAction = {
   IN: 'in',
   OUT: 'out'
 };
-//при переключении превью масштаб сбросить
+
 const resetScale = () => {
   currentScale = 1;
   currentPercent = 100;
@@ -35,11 +35,11 @@ const changeScale = (plusOrMinus) => {
   buttonControlBigger.disabled = currentPercent >= 100;
 };
 
-const onPhotoBigger = () => {
+const onButtonPhotoBigger = () => {
   changeScale(ZoomAction.IN);
 };
 
-const onPhotoSmaller = () => {
+const onButtonPhotoSmaller = () => {
   changeScale(ZoomAction.OUT);
 };
 
@@ -51,4 +51,4 @@ const createScaleZoom = () => {
   }
 };
 
-export {createScaleZoom, onPhotoBigger, onPhotoSmaller, resetScale};
+export {createScaleZoom, onButtonPhotoBigger, onButtonPhotoSmaller, resetScale};
