@@ -6,28 +6,12 @@ const photo = document.querySelector('.img-upload__preview img');//больша�
 const sliderContainer = document.querySelector('.img-upload__effect-level');
 let filterType = '';
 
-sliderValue.value = 1; //первоначальное значение слайдера в инпуте
+sliderValue.value = 1;
 sliderContainer.classList.add('hidden');
 
-if(slider.noUiSlider) {
-  slider.noUiSlider.on('update', () => {
-    const newValue = slider.noUiSlider.get();
-    let unit = '';
+const changeOptionsSlider = (option) => {
 
-    if (filterType === 'blur') {
-      unit = 'px';
-    }
-    if (filterType === 'invert') {
-      unit = '%';
-    }
-
-    sliderValue.value = newValue;
-    photo.style.filter = `${filterType}(${newValue}${unit})`;
-  });
-}
-
-const getOptionsSlider = (options) => {
-  if(options !== 'none' && !slider.noUiSlider) {
+  if (option !== 'none' && !slider.noUiSlider) {
     sliderContainer.classList.remove('hidden');
     noUiSlider.create(slider, {
       range: {
@@ -40,7 +24,24 @@ const getOptionsSlider = (options) => {
     });
   }
 
-  switch (options) {
+  if (slider.noUiSlider) {
+    slider.noUiSlider.on('update', () => {
+      const currentValue = slider.noUiSlider.get();
+      let unit = '';
+
+      if (filterType === 'blur') {
+        unit = 'px';
+      }
+      if (filterType === 'invert') {
+        unit = '%';
+      }
+
+      sliderValue.value = currentValue;
+      photo.style.filter = `${filterType}(${currentValue}${unit})`;
+    });
+  }
+
+  switch (option) {
     case 'chrome': {
       filterType = 'grayscale';
       slider.noUiSlider.updateOptions({
@@ -114,9 +115,17 @@ const getOptionsSlider = (options) => {
 const onFilterChange = (evt) => {
   resetScale();
   if (evt.target.matches('input[type="radio"]')) {
-    photo.className = `effects__preview--${evt.target.value}`; //evt.target.value здесь это value radio
-    getOptionsSlider(evt.target.value);
+    photo.className = `effects__preview--${evt.target.value}`;
+    changeOptionsSlider(evt.target.value);
   }
 };
 
-export {onFilterChange};
+const resetFilters = () => {
+  photo.style.filter = 'none';
+  if (slider.noUiSlider) {
+    slider.noUiSlider.destroy();
+  }
+  sliderContainer.classList.add('hidden');
+};
+
+export {onFilterChange, resetFilters};

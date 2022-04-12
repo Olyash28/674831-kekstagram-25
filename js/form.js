@@ -1,6 +1,7 @@
-import {isEscapeKey} from './util.js';
-import {createScaleZoom, onPhotoBigger, onPhotoSmaller} from './zoom.js';
-import {onFilterChange} from './slider.js';
+import {isEscapeKey, createModalMessage} from './util.js';
+import {createScaleZoom, onButtonPhotoBigger, onButtonPhotoSmaller} from './zoom.js';
+import {onFilterChange, resetFilters} from './slider.js';
+import {sendData} from './api.js';
 
 const buttonUpload = document.querySelector('#upload-file');
 const modalUpload = document.querySelector('.img-upload__overlay');
@@ -19,17 +20,17 @@ const onFormOpen = () => {
   document.body.classList.add('modal-open');
   createScaleZoom();
   uploadForm.addEventListener('change', onFilterChange);
-  buttonControlBigger.addEventListener('click', onPhotoBigger);
-  buttonControlSmaller.addEventListener('click', onPhotoSmaller);
+  buttonControlBigger.addEventListener('click', onButtonPhotoBigger);
+  buttonControlSmaller.addEventListener('click', onButtonPhotoSmaller);
   document.addEventListener('keydown', onPopupEscKeydown);
   buttonCloseUpload.addEventListener('click', onCloseForm);
 };
 
-uploadDescription.addEventListener('keydown',  (evt) => {
+uploadDescription.addEventListener('keydown', (evt) => {
   evt.stopPropagation();
 });
 
-hashtag.addEventListener('keydown',  (evt) => {
+hashtag.addEventListener('keydown', (evt) => {
   evt.stopPropagation();
 });
 
@@ -37,8 +38,13 @@ const closeForm = () => {
   modalUpload.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onPopupEscKeydown);
+  uploadForm.removeEventListener('change', onFilterChange);
+  buttonControlBigger.removeEventListener('click', onButtonPhotoBigger);
+  buttonControlSmaller.removeEventListener('click', onButtonPhotoSmaller);
   buttonCloseUpload.removeEventListener('click', onCloseForm);
+  resetFilters();
   pristine.reset();
+  buttonUpload.value = '';
 };
 
 function onPopupEscKeydown(evt) {
@@ -50,7 +56,6 @@ function onPopupEscKeydown(evt) {
 
 function onCloseForm() {
   closeForm();
-  buttonUpload.value = '';
 }
 
 buttonUpload.addEventListener('change', onFormOpen);
@@ -62,17 +67,20 @@ const checkValue = (value) => {
   const uniqueTags = Array.from(new Set(usersTags));
   const isUniqArrValid = uniqueTags.every((item) => /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/.test(item));
 
-  if(!isUniqArrValid) {
+  if (!isUniqArrValid) {
     isValid = false;
     textError = 'В хэш-теге от 2 до 20 символов с #';
     buttonSubmit.disabled = true;
+  } else {
+    buttonSubmit.disabled = false;
   }
-  if(usersTags.length !== uniqueTags.length) {
+
+  if (usersTags.length !== uniqueTags.length) {
     isValid = false;
     textError = 'Хэш-теги не должны повторяться';
     buttonSubmit.disabled = true;
   }
-  if(uniqueTags.length > 5) {
+  if (uniqueTags.length > 5) {
     isValid = false;
     textError = 'Нельзя указать больше пяти хэш-тегов';
     buttonSubmit.disabled = true;
@@ -107,7 +115,38 @@ function validateDescription(value) {
 pristine.addValidator(hashtag, validateHashtag, getTextError);
 pristine.addValidator(uploadDescription, validateDescription, 'Не больше 140 символов');
 
-uploadForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  pristine.validate();
-});
+const blockSubmitButton = () => {
+  buttonSubmit.disabled = true;
+  buttonSubmit.textContent = 'Публикую...';
+};
+
+const unblockSubmitButton = () => {
+  buttonSubmit.disabled = false;
+  buttonSubmit.textContent = 'Опубликовать';
+};
+
+const setUserFormSubmit = (onSuccess) => {
+  uploadForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    const isValid = pristine.validate();
+    if (isValid) {
+      blockSubmitButton();
+      sendData(
+        () => {
+          onSuccess();
+          createModalMessage('success');
+          unblockSubmitButton();
+        },
+        () => {
+          onSuccess();//НЕПОНЯТНО НАДО ЛИ
+          createModalMessage('error');
+          unblockSubmitButton();
+        },
+        new FormData(evt.target),
+      );
+    }
+  });
+};
+
+setUserFormSubmit(closeForm);

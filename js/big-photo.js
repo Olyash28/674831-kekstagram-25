@@ -49,7 +49,7 @@ const createBlockComments = (totalElements) => {
   });
 };
 
-const onShowComments = () => {
+const onButtonShowComments = () => {
   const visibleBlock = socialComments.children;
   createBlockComments(comments);
   commentsCount.textContent = visibleBlock.length;
@@ -65,7 +65,7 @@ const closeBigPicture = () => {
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onPopupEscKeydown);
   bigPhotoCloseButton.removeEventListener('click', onButtonClose);
-  buttonLoaderComments.removeEventListener('click', onShowComments);
+  buttonLoaderComments.removeEventListener('click', onButtonShowComments);
 };
 
 function onPopupEscKeydown(evt) {
@@ -102,7 +102,7 @@ const createBigPicture = (item) => {
     buttonLoaderComments.classList.add('hidden');
   }
 
-  buttonLoaderComments.addEventListener('click', onShowComments);
+  buttonLoaderComments.addEventListener('click', onButtonShowComments);
 
   bigPhotoCloseButton.addEventListener('click', onButtonClose);
 };
