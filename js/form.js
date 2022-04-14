@@ -3,6 +3,8 @@ import {createScaleZoom, onButtonPhotoBigger, onButtonPhotoSmaller} from './zoom
 import {onFilterChange, resetFilters} from './slider.js';
 import {sendData} from './api.js';
 
+const MAX_LENGTH = 140;
+
 const buttonUpload = document.querySelector('#upload-file');
 const modalUpload = document.querySelector('.img-upload__overlay');
 const buttonCloseUpload = document.querySelector('#upload-cancel');
@@ -12,10 +14,12 @@ const uploadDescription = uploadForm.querySelector('.text__description');
 const buttonSubmit = uploadForm.querySelector('#upload-submit');
 const buttonControlSmaller = document.querySelector('.scale__control--smaller');
 const buttonControlBigger = document.querySelector('.scale__control--bigger');
+const effectsDefault = document.querySelector('#effect-none');
 
 const pristine = new Pristine(uploadForm);
 
 const onFormOpen = () => {
+  effectsDefault.checked = true;
   modalUpload.classList.remove('hidden');
   document.body.classList.add('modal-open');
   createScaleZoom();
@@ -23,7 +27,7 @@ const onFormOpen = () => {
   buttonControlBigger.addEventListener('click', onButtonPhotoBigger);
   buttonControlSmaller.addEventListener('click', onButtonPhotoSmaller);
   document.addEventListener('keydown', onPopupEscKeydown);
-  buttonCloseUpload.addEventListener('click', onCloseForm);
+  buttonCloseUpload.addEventListener('click', onFormClose);
 };
 
 uploadDescription.addEventListener('keydown', (evt) => {
@@ -41,22 +45,11 @@ const closeForm = () => {
   uploadForm.removeEventListener('change', onFilterChange);
   buttonControlBigger.removeEventListener('click', onButtonPhotoBigger);
   buttonControlSmaller.removeEventListener('click', onButtonPhotoSmaller);
-  buttonCloseUpload.removeEventListener('click', onCloseForm);
+  buttonCloseUpload.removeEventListener('click', onFormClose);
   resetFilters();
-  pristine.reset();
+  pristine.destroy();
   buttonUpload.value = '';
 };
-
-function onPopupEscKeydown(evt) {
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    closeForm();
-  }
-}
-
-function onCloseForm() {
-  closeForm();
-}
 
 buttonUpload.addEventListener('change', onFormOpen);
 
@@ -96,24 +89,22 @@ const checkValue = (value) => {
   };
 };
 
-function validateHashtag(value) {
+const validateHashtag = (value) => {
   const {isValid} = checkValue(value);
 
   return isValid;
-}
+};
 
-function getTextError(value) {
+const getTextError = (value) => {
   const {textError} = checkValue(value);
 
   return textError;
-}
+};
 
-function validateDescription(value) {
-  return value.length <= 140;
-}
+const validateDescription = (value) => (value.length <= MAX_LENGTH);
 
 pristine.addValidator(hashtag, validateHashtag, getTextError);
-pristine.addValidator(uploadDescription, validateDescription, 'Не больше 140 символов');
+pristine.addValidator(uploadDescription, validateDescription, `Не больше ${MAX_LENGTH}символов`);
 
 const blockSubmitButton = () => {
   buttonSubmit.disabled = true;
@@ -125,7 +116,7 @@ const unblockSubmitButton = () => {
   buttonSubmit.textContent = 'Опубликовать';
 };
 
-const setUserFormSubmit = (onSuccess) => {
+const setUserFormSubmit = () => {
   uploadForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
@@ -134,12 +125,12 @@ const setUserFormSubmit = (onSuccess) => {
       blockSubmitButton();
       sendData(
         () => {
-          onSuccess();
+          closeForm();
           createModalMessage('success');
           unblockSubmitButton();
         },
         () => {
-          onSuccess();//НЕПОНЯТНО НАДО ЛИ
+          closeForm();
           createModalMessage('error');
           unblockSubmitButton();
         },
@@ -149,4 +140,15 @@ const setUserFormSubmit = (onSuccess) => {
   });
 };
 
-setUserFormSubmit(closeForm);
+function onPopupEscKeydown(evt) {
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+    closeForm();
+  }
+}
+
+function onFormClose() {
+  closeForm();
+}
+
+export {setUserFormSubmit};

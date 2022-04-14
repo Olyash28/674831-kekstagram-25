@@ -1,8 +1,8 @@
 import {resetScale} from './zoom.js';
 
 const slider = document.querySelector('.effect-level__slider');
-const sliderValue = document.querySelector('.effect-level__value'); //инпут слайдера
-const photo = document.querySelector('.img-upload__preview img');//большая фотка
+const sliderValue = document.querySelector('.effect-level__value');
+const photo = document.querySelector('.img-upload__preview img');
 const sliderContainer = document.querySelector('.img-upload__effect-level');
 let filterType = '';
 

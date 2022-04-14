@@ -7,19 +7,21 @@ function getRandomNumber(firstNumber, lastNumber) {
   return ('Напишите что-нибудь другое');
 }
 
-//Ссылки на источники:
-// https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-// https://learn.javascript.ru/number
+function createRandomIdFromRangeGenerator (firstNumber, lastNumber) {
+  const previousValues = [];
 
-
-// function checkCommentLength(message, maxLength) {
-//   const messageLength = message.length;
-//
-//   return (messageLength <= maxLength);
-// }
-//
-// checkCommentLength();
-//
+  return function () {
+    let currentValue = getRandomNumber(firstNumber, lastNumber);
+    if (previousValues.length >= (lastNumber - firstNumber + 1)) {
+      return null;
+    }
+    while (previousValues.includes(currentValue)) {
+      currentValue = getRandomNumber(firstNumber, lastNumber);
+    }
+    previousValues.push(currentValue);
+    return currentValue;
+  };
+}
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
@@ -51,16 +53,6 @@ const createModalMessage = (type) => {
   document.addEventListener('keydown', (evt) => onCloseWindow(evt, type));
 };
 
-// const createMessageLoading = () => {
-//   const templateFragment = document.querySelector('#messages').content;
-//   const template = templateFragment.querySelector('.img-upload__message');
-//   const fragment = document.createDocumentFragment();
-//   const element = template.cloneNode(true);
-//
-//   fragment.appendChild(element);
-//   document.body.appendChild(fragment);
-// };
-
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
   alertContainer.style.zIndex = 100;
@@ -82,4 +74,12 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export {getRandomNumber, isEscapeKey, makeElement, createModalMessage, showAlert};
+const debounce = (callback, timeoutDelay) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+export {getRandomNumber, isEscapeKey, makeElement, createModalMessage, showAlert, createRandomIdFromRangeGenerator, debounce};

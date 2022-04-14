@@ -1417,3 +1417,18 @@ main {
 .hidden {
   display: none;
 }
+
+.form-group {
+  position: relative;
+}
+
+.pristine-error {
+  display: block;
+  position: absolute;
+  top: 25px;
+  left: 15px;
+  color: #ee0c0c;
+  text-align: center;
+  text-transform: none;
+  font-size: 15px;
+}
