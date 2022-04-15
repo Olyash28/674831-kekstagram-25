@@ -8,12 +8,12 @@ fileChooser.addEventListener('change', () => {
   const file = fileChooser.files[0];
   const fileName = file.name.toLowerCase();
 
-  const isMatched = FILE_TYPES.some((it) => fileName.endsWith(it));
+  const isMatched = FILE_TYPES.some((fileType) => fileName.endsWith(fileType));
 
   if (isMatched) {
     preview.src = URL.createObjectURL(file);
     miniPreviews.forEach((item) => {
-      item.style.backgroundImage = `url(${URL.createObjectURL(file)})`;
+      item.style.backgroundImage = `url(${ URL.createObjectURL(file) })`;
     });
   }
 });

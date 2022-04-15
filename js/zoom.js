@@ -16,8 +16,8 @@ const ZoomAction = {
 const resetScale = () => {
   currentScale = 1;
   currentPercent = 100;
-  photo.style.transform = `scale(${currentScale})`;
-  scaleControlValue.value = `${currentPercent}%`;
+  photo.style.transform = `scale(${ currentScale })`;
+  scaleControlValue.value = `${ currentPercent }%`;
 };
 
 const changeScale = (plusOrMinus) => {
@@ -28,10 +28,10 @@ const changeScale = (plusOrMinus) => {
     currentScale = currentScale - STEP_PERCENT_VALUE / 100;
     currentPercent = currentPercent - STEP_PERCENT_VALUE;
   }
-  photo.style.transform = `scale(${currentScale})`;
-  scaleControlValue.value = `${currentPercent}%`;
+  photo.style.transform = `scale(${ currentScale })`;
+  scaleControlValue.value = `${ currentPercent }%`;
 
-  buttonControlSmaller.disabled = currentScale <= 0.25;
+  buttonControlSmaller.disabled = currentPercent <= 25;
   buttonControlBigger.disabled = currentPercent >= 100;
 };
 
@@ -44,11 +44,9 @@ const onButtonPhotoSmaller = () => {
 };
 
 const createScaleZoom = () => {
-  photo.style.transform = `scale(${currentScale})`;
-  scaleControlValue.value = `${currentPercent}%`;
-  if (currentPercent >= 100) {
-    buttonControlBigger.disabled = true;
-  }
+  photo.style.transform = `scale(${ currentScale })`;
+  scaleControlValue.value = `${ currentPercent }%`;
+  buttonControlSmaller.disabled = false;
 };
 
 export {createScaleZoom, onButtonPhotoBigger, onButtonPhotoSmaller, resetScale};

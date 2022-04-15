@@ -85,7 +85,7 @@ const createBigPicture = (item) => {
   }
 };
 
-function onButtonShowCommentsClick () {
+function onButtonShowCommentsClick() {
   const visibleBlock = socialCommentsBlock.children;
   createBlockComments(comments);
   commentsCount.textContent = visibleBlock.length;

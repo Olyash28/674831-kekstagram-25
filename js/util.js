@@ -7,13 +7,13 @@ function getRandomNumber(firstNumber, lastNumber) {
   return ('Напишите что-нибудь другое');
 }
 
-function createRandomIdFromRangeGenerator (firstNumber, lastNumber) {
+function createRandomIdFromRangeGenerator(firstNumber, lastNumber) {
   const previousValues = [];
 
   return function () {
     let currentValue = getRandomNumber(firstNumber, lastNumber);
     if (previousValues.length >= (lastNumber - firstNumber + 1)) {
-      return null;
+      return;
     }
     while (previousValues.includes(currentValue)) {
       currentValue = getRandomNumber(firstNumber, lastNumber);
@@ -35,14 +35,16 @@ const onCloseWindow = (evt, type) => {
   const windowElement = document.querySelector(`.${type}`);
 
   if (isEscapeKey(evt) || evt.target.classList.contains(type) || evt.target.classList.contains(`${type}__button`)) {
-    document.body.removeChild(windowElement);
+    if (windowElement) {
+      document.body.removeChild(windowElement);
+    }
     document.removeEventListener('keydown', onCloseWindow);
   }
 };
 
 const createModalMessage = (type) => {
-  const templateFragment = document.querySelector(`#${type}`).content;
-  const template = templateFragment.querySelector(`.${type}`);
+  const templateFragment = document.querySelector(`#${ type }`).content;
+  const template = templateFragment.querySelector(`.${ type }`);
   const fragment = document.createDocumentFragment();
   const element = template.cloneNode(true);
 
@@ -82,4 +84,12 @@ const debounce = (callback, timeoutDelay) => {
   };
 };
 
-export {getRandomNumber, isEscapeKey, makeElement, createModalMessage, showAlert, createRandomIdFromRangeGenerator, debounce};
+export {
+  getRandomNumber,
+  isEscapeKey,
+  makeElement,
+  createModalMessage,
+  showAlert,
+  createRandomIdFromRangeGenerator,
+  debounce
+};
