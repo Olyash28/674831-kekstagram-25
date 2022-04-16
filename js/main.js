@@ -1,4 +1,3 @@
-import './avatar.js';
 import {loadData} from './api.js';
 import {generatePhotos} from './miniatures.js';
 import {setUserFormSubmit} from './form.js';

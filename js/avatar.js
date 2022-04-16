@@ -4,7 +4,7 @@ const fileChooser = document.querySelector('#upload-file');
 const preview = document.querySelector('.img-upload__preview img');
 const miniPreviews = document.querySelectorAll('.effects__preview');
 
-fileChooser.addEventListener('change', () => {
+const chooseFile = () => {
   const file = fileChooser.files[0];
   const fileName = file.name.toLowerCase();
 
@@ -16,4 +16,6 @@ fileChooser.addEventListener('change', () => {
       item.style.backgroundImage = `url(${ URL.createObjectURL(file) })`;
     });
   }
-});
+};
+
+export {chooseFile};

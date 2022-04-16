@@ -1,13 +1,14 @@
 const ALERT_SHOW_TIME = 10000;
+const ESC_KEYCODE = 'Escape';
 
-function getRandomNumber(firstNumber, lastNumber) {
-  if (firstNumber >= 0 && lastNumber > firstNumber) {
-    return Math.floor(Math.random() * (lastNumber - firstNumber + 1)) + firstNumber;
+const getRandomNumber = (firstNumber, lastNumber) => {
+  if (firstNumber < 0 && lastNumber < firstNumber) {
+    return;
   }
-  return ('Напишите что-нибудь другое');
-}
+  return Math.floor(Math.random() * (lastNumber - firstNumber + 1)) + firstNumber;
+};
 
-function createRandomIdFromRangeGenerator(firstNumber, lastNumber) {
+const createRandomIdFromRangeGenerator = (firstNumber, lastNumber) => {
   const previousValues = [];
 
   return function () {
@@ -21,38 +22,14 @@ function createRandomIdFromRangeGenerator(firstNumber, lastNumber) {
     previousValues.push(currentValue);
     return currentValue;
   };
-}
+};
 
-const isEscapeKey = (evt) => evt.key === 'Escape';
+const isEscapeKey = (evt) => evt.key === ESC_KEYCODE;
 
 const makeElement = (tagName, className) => {
   const element = document.createElement(tagName);
   element.classList.add(className);
   return element;
-};
-
-const onCloseWindow = (evt, type) => {
-  const windowElement = document.querySelector(`.${type}`);
-
-  if (isEscapeKey(evt) || evt.target.classList.contains(type) || evt.target.classList.contains(`${type}__button`)) {
-    if (windowElement) {
-      document.body.removeChild(windowElement);
-    }
-    document.removeEventListener('keydown', onCloseWindow);
-  }
-};
-
-const createModalMessage = (type) => {
-  const templateFragment = document.querySelector(`#${ type }`).content;
-  const template = templateFragment.querySelector(`.${ type }`);
-  const fragment = document.createDocumentFragment();
-  const element = template.cloneNode(true);
-
-  fragment.appendChild(element);
-  document.body.appendChild(fragment);
-
-  element.addEventListener('click', (evt) => onCloseWindow(evt, type));
-  document.addEventListener('keydown', (evt) => onCloseWindow(evt, type));
 };
 
 const showAlert = (message) => {
@@ -85,10 +62,8 @@ const debounce = (callback, timeoutDelay) => {
 };
 
 export {
-  getRandomNumber,
   isEscapeKey,
   makeElement,
-  createModalMessage,
   showAlert,
   createRandomIdFromRangeGenerator,
   debounce
