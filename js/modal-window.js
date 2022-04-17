@@ -1,6 +1,8 @@
 import {isEscapeKey} from './util.js';
 
-const closeWindow = (evt, type, callback) => {
+let type;
+
+const closeWindow = (evt, callback) => {
   const windowElement = document.querySelector(`.${type}`);
 
   if (isEscapeKey(evt) || evt.target.classList.contains(type) || evt.target.classList.contains(`${type}__button`)) {
@@ -12,14 +14,15 @@ const closeWindow = (evt, type, callback) => {
   }
 };
 
-const onWindowClose = (type) => (evt) => {
+const onWindowClose = (evt) => {
   evt.preventDefault();
-  closeWindow(evt, type, () => {
-    document.removeEventListener('keydown', onWindowClose(type));
+  closeWindow(evt, () => {
+    document.removeEventListener('keydown', onWindowClose);
   });
 };
 
-const createModalMessage = (type) => {
+const createModalMessage = (messageType) => {
+  type = messageType;
   const templateFragment = document.querySelector(`#${ type }`).content;
   const template = templateFragment.querySelector(`.${ type }`);
   const fragment = document.createDocumentFragment();
@@ -28,8 +31,8 @@ const createModalMessage = (type) => {
   fragment.appendChild(element);
   document.body.appendChild(fragment);
 
-  element.addEventListener('click', onWindowClose(type));
-  document.addEventListener('keydown', onWindowClose(type));
+  element.addEventListener('click', onWindowClose);
+  document.addEventListener('keydown', onWindowClose);
 };
 
 export {createModalMessage};

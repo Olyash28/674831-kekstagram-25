@@ -38,15 +38,7 @@ const createRandomPhotos = debounce(() => {
 }, RERENDER_DELAY);
 
 const createPopularPhotos = debounce(() => {
-  const comparePhotos = (a, b) => {
-    if (b.comments.length > a.comments.length) {
-      return 1;
-    } else if (a.comments.length > b.comments.length) {
-      return -1;
-    } else {
-      return 0;
-    }
-  };
+  const comparePhotos = (a, b) => b.comments.length - a.comments.length;
 
   const popularPhotos = previewSavedPhotos.slice().sort(comparePhotos);
 
