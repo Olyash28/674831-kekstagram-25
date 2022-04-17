@@ -1,11 +1,11 @@
-// import {photos} from './data.js';
 import {createBigPicture} from './big-photo.js';
 
 const picturesContainer = document.querySelector('.pictures');
 
 const templateFragment = document.querySelector('#picture').content;
-const template = templateFragment.querySelector('.picture'); // В фрагменте находим нужный элемент
-const fragment = document.createDocumentFragment(); //создаем свой фрагмент для DOM
+const template = templateFragment.querySelector('.picture');
+const fragment = document.createDocumentFragment();
+
 
 const generatePhotos = (photos) => {
   for (let i = 0; i < photos.length; i++) {
@@ -19,7 +19,8 @@ const generatePhotos = (photos) => {
     const pictureComments = element.querySelector('.picture__comments');
     pictureComments.textContent = photos[i].comments.length;
 
-    element.addEventListener('click', () => {
+    element.addEventListener('click', (evt) => {
+      evt.preventDefault();
       createBigPicture(photos[i]);
     });
 
@@ -29,5 +30,5 @@ const generatePhotos = (photos) => {
   picturesContainer.appendChild(fragment);
 };
 
-export {generatePhotos};
+export {generatePhotos, picturesContainer};
 

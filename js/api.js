@@ -1,14 +1,17 @@
-import {generatePhotos} from './miniatures.js';
 import {showAlert} from './util.js';
 
-fetch('https://25.javascript.pages.academy/kekstagram/data')
-  .then((response) => response.json())
-  .then((previewPhotos) => {
-    generatePhotos(previewPhotos);
-  })
-  .catch(() => {
-    showAlert('Не удалось загрузить фотографии. Попробуйте ещё раз');
-  });
+const TEXT_ERROR = 'Не удалось загрузить фотографии. Попробуйте ещё раз';
+
+const loadData = (onSuccess) => {
+  fetch('https://25.javascript.pages.academy/kekstagram/data')
+    .then((response) => response.json())
+    .then((previewPhotos) => {
+      onSuccess(previewPhotos);
+    })
+    .catch(() => {
+      showAlert(TEXT_ERROR);
+    });
+};
 
 
 const sendData = (onSuccess, onFail, body) => {
@@ -31,4 +34,4 @@ const sendData = (onSuccess, onFail, body) => {
     });
 };
 
-export {sendData};
+export {sendData, loadData};

@@ -1,65 +1,36 @@
 const ALERT_SHOW_TIME = 10000;
+const ESC_KEYCODE = 'Escape';
 
-function getRandomNumber(firstNumber, lastNumber) {
-  if (firstNumber >= 0 && lastNumber > firstNumber) {
-    return Math.floor(Math.random() * (lastNumber - firstNumber + 1)) + firstNumber;
+const getRandomNumber = (firstNumber, lastNumber) => {
+  if (firstNumber < 0 && lastNumber < firstNumber) {
+    return;
   }
-  return ('Напишите что-нибудь другое');
-}
+  return Math.floor(Math.random() * (lastNumber - firstNumber + 1)) + firstNumber;
+};
 
-//Ссылки на источники:
-// https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-// https://learn.javascript.ru/number
+const createRandomIdFromRangeGenerator = (firstNumber, lastNumber) => {
+  const previousValues = [];
 
+  return function () {
+    let currentValue = getRandomNumber(firstNumber, lastNumber);
+    if (previousValues.length >= (lastNumber - firstNumber + 1)) {
+      return;
+    }
+    while (previousValues.includes(currentValue)) {
+      currentValue = getRandomNumber(firstNumber, lastNumber);
+    }
+    previousValues.push(currentValue);
+    return currentValue;
+  };
+};
 
-// function checkCommentLength(message, maxLength) {
-//   const messageLength = message.length;
-//
-//   return (messageLength <= maxLength);
-// }
-//
-// checkCommentLength();
-//
-
-const isEscapeKey = (evt) => evt.key === 'Escape';
+const isEscapeKey = (evt) => evt.key === ESC_KEYCODE;
 
 const makeElement = (tagName, className) => {
   const element = document.createElement(tagName);
   element.classList.add(className);
   return element;
 };
-
-const onCloseWindow = (evt, type) => {
-  const windowElement = document.querySelector(`.${type}`);
-
-  if (isEscapeKey(evt) || evt.target.classList.contains(type) || evt.target.classList.contains(`${type}__button`)) {
-    document.body.removeChild(windowElement);
-    document.removeEventListener('keydown', onCloseWindow);
-  }
-};
-
-const createModalMessage = (type) => {
-  const templateFragment = document.querySelector(`#${type}`).content;
-  const template = templateFragment.querySelector(`.${type}`);
-  const fragment = document.createDocumentFragment();
-  const element = template.cloneNode(true);
-
-  fragment.appendChild(element);
-  document.body.appendChild(fragment);
-
-  element.addEventListener('click', (evt) => onCloseWindow(evt, type));
-  document.addEventListener('keydown', (evt) => onCloseWindow(evt, type));
-};
-
-// const createMessageLoading = () => {
-//   const templateFragment = document.querySelector('#messages').content;
-//   const template = templateFragment.querySelector('.img-upload__message');
-//   const fragment = document.createDocumentFragment();
-//   const element = template.cloneNode(true);
-//
-//   fragment.appendChild(element);
-//   document.body.appendChild(fragment);
-// };
 
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
@@ -82,4 +53,18 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export {getRandomNumber, isEscapeKey, makeElement, createModalMessage, showAlert};
+const debounce = (callback, timeoutDelay) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+export {
+  isEscapeKey,
+  makeElement,
+  showAlert,
+  createRandomIdFromRangeGenerator,
+  debounce
+};

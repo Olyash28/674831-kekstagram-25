@@ -1,10 +1,16 @@
-import {resetScale} from './zoom.js';
-
 const slider = document.querySelector('.effect-level__slider');
-const sliderValue = document.querySelector('.effect-level__value'); //инпут слайдера
-const photo = document.querySelector('.img-upload__preview img');//большая фотка
+const sliderValue = document.querySelector('.effect-level__value');
+const photo = document.querySelector('.img-upload__preview img');
 const sliderContainer = document.querySelector('.img-upload__effect-level');
 let filterType = '';
+
+const PhotoEffect = {
+  CHROME: 'chrome',
+  SEPIA: 'sepia',
+  MARVIN: 'marvin',
+  PHOBOS: 'phobos',
+  HEAT: 'heat'
+};
 
 sliderValue.value = 1;
 sliderContainer.classList.add('hidden');
@@ -37,12 +43,12 @@ const changeOptionsSlider = (option) => {
       }
 
       sliderValue.value = currentValue;
-      photo.style.filter = `${filterType}(${currentValue}${unit})`;
+      photo.style.filter = `${ filterType }(${ currentValue }${ unit })`;
     });
   }
 
   switch (option) {
-    case 'chrome': {
+    case PhotoEffect.CHROME: {
       filterType = 'grayscale';
       slider.noUiSlider.updateOptions({
         range: {
@@ -55,7 +61,7 @@ const changeOptionsSlider = (option) => {
       });
       break;
     }
-    case 'sepia': {
+    case PhotoEffect.SEPIA: {
       filterType = 'sepia';
       slider.noUiSlider.updateOptions({
         range: {
@@ -68,7 +74,7 @@ const changeOptionsSlider = (option) => {
       });
       break;
     }
-    case 'marvin': {
+    case PhotoEffect.MARVIN: {
       filterType = 'invert';
       slider.noUiSlider.updateOptions({
         range: {
@@ -80,7 +86,7 @@ const changeOptionsSlider = (option) => {
       });
       break;
     }
-    case 'phobos': {
+    case PhotoEffect.PHOBOS: {
       filterType = 'blur';
       slider.noUiSlider.updateOptions({
         range: {
@@ -92,7 +98,7 @@ const changeOptionsSlider = (option) => {
       });
       break;
     }
-    case 'heat': {
+    case PhotoEffect.HEAT: {
       filterType = 'brightness';
       slider.noUiSlider.updateOptions({
         range: {
@@ -113,9 +119,8 @@ const changeOptionsSlider = (option) => {
 };
 
 const onFilterChange = (evt) => {
-  resetScale();
   if (evt.target.matches('input[type="radio"]')) {
-    photo.className = `effects__preview--${evt.target.value}`;
+    photo.className = `effects__preview--${ evt.target.value }`;
     changeOptionsSlider(evt.target.value);
   }
 };
